@@ -9,7 +9,7 @@ from pprint import pprint
 from zeroconf import ServiceBrowser, Zeroconf
 import libconf
 
-version = 1.0
+version = 1.0.0
 
 if len(sys.argv) > 1:
     if sys.argv[1] == "-v":
