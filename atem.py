@@ -127,7 +127,7 @@ class Atem:
 
         while True:
             try:
-                print('Connecting...')
+                # print('Connecting...')
                 self.sendDatagram(datagram)
                 break
             except OSError as e:
@@ -136,7 +136,7 @@ class Atem:
                 #if e.errno == 101:
                 time.sleep(5)
             except:
-                print('Connecting datagram failed')
+                # print('Connecting datagram failed')
                 time.sleep(5)
                 raise
                 
@@ -664,6 +664,8 @@ if __name__ == "__main__":
         index = -1
 
     def tallyWatch(atem):
+        if index == -1:
+            return
         tally = atem.state['tally_by_index'][index]
 
         try:
