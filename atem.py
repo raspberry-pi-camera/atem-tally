@@ -9,7 +9,7 @@ from pprint import pprint
 from zeroconf import ServiceBrowser, Zeroconf
 import libconf
 
-version = "1.0.0"
+version = "1.1.0"
 
 if len(sys.argv) > 1:
     if sys.argv[1] == "-v":
@@ -640,6 +640,9 @@ class MyListener:
         self.info = info
         self.is_invalid = False
     
+    def update_service(self, zeroconf, type, name):
+        pass
+    
     is_invalid = True
     info = None
 
@@ -666,10 +669,29 @@ if __name__ == "__main__":
     def tallyWatch(atem):
         if index == -1:
             return
-        tally = atem.state['tally_by_index'][index]
+        pgm = 0
+        try:
+            tally = atem.state['tally'][index]
+        except KeyError:
+            return
+        tally['trn'] = False
+        for i in (0, 1, 2, 3, 4, 1000, 2001, 2002, 3010, 3011):
+            try:
+                if atem.state['tally'][i]['pgm']:
+                    pgm += 1
+            except KeyError:
+                pass
+
+        if pgm > 1:
+            if tally['pgm']:
+                tally['trn'] = True
+        
 
         try:
-            if tally['pgm']:
+            if tally['trn']:
+                with open("/tmp/neopixel.state", "w") as file:
+                    file.write("T")
+            elif tally['pgm']:
                 with open("/tmp/neopixel.state", "w") as file:
                     file.write("L")
             elif tally['prv']:
