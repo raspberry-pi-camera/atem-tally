@@ -671,7 +671,7 @@ if __name__ == "__main__":
             return
         pgm = 0
         try:
-            tally = atem.state['tally'][index]
+            tally = atem.state['tally_by_index'][index]
         except KeyError:
             return
         tally['trn'] = False
