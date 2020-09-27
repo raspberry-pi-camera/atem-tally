@@ -9,7 +9,7 @@ from pprint import pprint
 from zeroconf import ServiceBrowser, Zeroconf
 import libconf
 
-version = "1.1.0"
+version = "1.1.1"
 
 if len(sys.argv) > 1:
     if sys.argv[1] == "-v":
@@ -598,7 +598,11 @@ class Atem:
         pass
 
     def recvTrPs(self, data):
-        pass
+        """Transition Position"""
+        if data[1]&1 != 0:
+            self.state['in_transition'] = True
+        if data[1]&1 == 0:
+            self.state['in_transition'] = False
 
     def recvTMxP(self, data):
         pass
@@ -675,16 +679,8 @@ if __name__ == "__main__":
         except KeyError:
             return
         tally['trn'] = False
-        for i in (0, 1, 2, 3, 4, 1000, 2001, 2002, 3010, 3011):
-            try:
-                if atem.state['tally'][i]['pgm']:
-                    pgm += 1
-            except KeyError:
-                pass
-
-        if pgm > 1:
-            if tally['pgm']:
-                tally['trn'] = True
+        if atem.state['in_transition']:
+            tally['trn'] = True
         
 
         try:
@@ -703,9 +699,12 @@ if __name__ == "__main__":
         except:
             pass
 
-    a.tallyHandler = tallyWatch
+    def dummy(a):
+        pass
+    a.tallyHandler = dummy
 
     a.connectToSwitcher()
 
     while True:
         a.waitForPacket()
+        tallyWatch(a)
