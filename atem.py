@@ -9,7 +9,7 @@ from pprint import pprint
 from zeroconf import ServiceBrowser, Zeroconf
 import libconf
 
-version = "1.1.1"
+version = "1.1.2"
 
 if len(sys.argv) > 1:
     if sys.argv[1] == "-v":
@@ -680,7 +680,8 @@ if __name__ == "__main__":
             return
         tally['trn'] = False
         if atem.state['in_transition']:
-            tally['trn'] = True
+            if tally['pgm'] or tally['prv']:
+                tally['trn'] = True
         
 
         try:
